@@ -19,7 +19,7 @@ Darwin aqualung 18.7.0 Darwin Kernel Version 18.7.0: Thu Jun 20 18:42:21 PDT 201
 
 ## Compiling and installing
 
-Compiling was unsuccessful for some very strange reasons. Even installation via MacPorts and Brew provided a mixed-back of 
+Compiling was unsuccessful for some very strange reasons. Even installation via MacPorts and Brew provided a mixed-bag of issues. 
 
 Attempt #1 : Runtime frameworks from the website. THese are just frameworks and do not have the `gst-*` command-line functions.
 
@@ -30,6 +30,8 @@ Attempt #3 : Compile the Git gst-build meson/ninja release. Similar issues, exce
 Attempt #4 : MacPorts. This worked except it was missing the `applemedia` AVF video tools which are in gst-plugins-bad. `autovideo{src,sink}` are unreleable and yielded "error(4)".
 
 Attempt #5 : Brew. Brew provided the AVF bad plugins, but no X plugins (ximagesink). Fortunately it has `gtksink` which is much more stable than `glimagesink` although neither can be resized by caps.
+
+TODO: Go back and include the actual error messages for the sake of people web-searching.
 
 ## Pipelines
 
