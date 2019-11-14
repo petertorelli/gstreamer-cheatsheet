@@ -64,31 +64,35 @@ to prevent the "[you're droppping a lot of frames or your computer is too slow]"
     ! video/x-raw,width=640,height=480 ! gtksink sync=false
 ~~~
 
-### Send a webcam over UDP and decode on the same host
+### Send a webcam over UDP and decode
 
 Hoo boy this took a long time to figure out. Ultimately I had to copy the giant cap string for all the elements and remove pieces until I understood (kinda) what was going on.
 
-First the server. This is the easiest part. There's no `h264` or `x264` codecs you'll see in online forums in the latest Brew or MacPorts GStreamer distros (1.16.1, btw). So instead I used `gst-libav`. Payloading for UDP was new to me, too.
+First, the server. This is the easiest part. There's no `h264` or `x264` codecs you'll see in online forums in the latest Brew or MacPorts GStreamer distros (1.16.1, btw). So instead I used `gst-libav`. Payloading for UDP was new to me, too.
 
-We need the `videoconvert` since `avenc_mpeg4` expects `video/x-raw,format=I420` and `avfvideosrc` only outputs UYVY, NV12, YUY2 and BGRA.
+Next, we need the `videoconvert` since `avenc_mpeg4` expects `video/x-raw,format=I420` and `avfvideosrc` only outputs UYVY, NV12, YUY2 and BGRA. The `queue` should be limited to avoid lag, hence the max setting.
+
+Lastly, keep in mind that `host` is where the packets are being *sent*. This isn't TCP, it's a UDP push to the host, which is the, er, client. If you have a firewall you'll need to open port 5000. Like the good old days of internet gaming.
 
 ~~~
 % gst-launch-1.0 -v \
     avfvideosrc device-index=1 ! \
-    queue ! \
+    queue max-size-buffers=1 ! \
     videoconvert ! \
+    videoscale ! \
+    video/mpeg,width=640,height=480,framerate=20/1 ! \
     avenc_mpeg4 ! \
     rtpmp4vpay ! \
     udpsink host=127.0.0.1 port=5000
 ~~~
 
-The client took a while to figure out since a lot of the caps are not automatically transmitted in the binary stream, which seems odd. I thought MPEG I-frames indicated the native resolution. /shrugs/ It is important to use `-v` and verify the frameates are both the same. Originally I had copied the caps from the server command to every element of the client command, and then started pulling them out until it failed.
+The client took a while to figure out since a lot of the caps are not automatically transmitted in the binary stream, which seems odd. I thought MPEG I-frames indicated the native resolution. /shrugs/ It is important to use `-v` and verify the frame rates are both the same. Originally I had copied the caps from the server command to every element of the client command, and then started pulling them out until it failed.
 
 ~~~
 % gst-launch-1.0 -v \
-    udpsrc address=127.0.0.1 port=5000 caps='application/x-rtp' ! \
+    udpsrc port=5000 caps='application/x-rtp' ! \
     rtpmp4vdepay ! \
-    "video/mpeg, width=(int)800, height=(int)600,framerate=20/1" ! \
+    video/mpeg,width=640,height=480,framerate=20/1 ! \
     avdec_mpeg4 ! \
     videoconvert ! \
     gtksink
