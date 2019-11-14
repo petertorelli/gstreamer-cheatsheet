@@ -72,7 +72,7 @@ First, the server. This is the easiest part. There's no `h264` or `x264` codecs 
 
 Next, we need the `videoconvert` since `avenc_mpeg4` expects `video/x-raw,format=I420` and `avfvideosrc` only outputs UYVY, NV12, YUY2 and BGRA. The `queue` should be limited to avoid lag, hence the max setting.
 
-Lastly, keep in mind that `host` is where the packets are being *sent*. This isn't TCP, it's a UDP push to the host, which is the, er, client. If you have a firewall you'll need to open port 5000. Like the good old days of internet gaming.
+Lastly, keep in mind that `host` is where the packets are being *sent*. This isn't TCP, it's a UDP push to the host, which is the, er, client. If you have a firewall you'll need to open port 5000. Like the good old days of internet gaming. I did an experiment using the `tcpserver{sink,src}` and it had up to a 3-second delay, which may have been related to not payloading the data. I've read UDP sacrifices quality for low-latency since the packets have a maximum size that is much smaller than TCP. Need moar dat-uh.
 
 ~~~
 % gst-launch-1.0 -v \
