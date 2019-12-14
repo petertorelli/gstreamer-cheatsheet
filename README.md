@@ -97,3 +97,32 @@ The client took a while to figure out since a lot of the caps are not automatica
     videoconvert ! \
     gtksink
 ~~~
+
+# NVIDIA Jetpack Headless RTSP to macOS XQuartz
+
+NVIDIA Xavier doesn't like running as an Xhost. I tried VNC and xhosting to my mac, and I constantly run into:
+
+~~~
+nvbuf_utils: Could not get EGL display connection
+~~~
+
+To which there is no solution on internet (just lots people arguing about what to set DISPLAY to .. sigh). Meanwhile, everything runs fine when I connect a display to the Xavier. My X-debug-fu is pretty rusty ... I haven't programmed in X since 1993.
+
+My hacky workaround is to set up the CCTV cameras and the Xavier on their own subnet, and then process the RTSP streams on the Xavier and dump them to a UDP port. This can be enabled or disabled by a cloud connection to the Xavier for the cloud video server. But here is the pipieline for future self-reference:
+
+Source (standard RTSP port 554, UDP 5000)
+~~~
+gst-launch-1.0 -e rtspsrc 'location=rtsp://USERNAME:PASSWORD@CAMERAIPADDRESS:554' latency=300 ! udpsink host=TARGET port=5000
+~~~
+
+Sink:
+~~~
+gst-launch-1.0 -v udpsrc port=5000 caps='application/x-rtp' ! rtph264depay ! avdec_h264 ! videoconvert ! gtksink
+~~~
+
+I use a separate router for a subnet so I'm not trashing my work network performance.
+
+Now I can use NVIDIA inference gstreamer plugins on the Xavier as a smart closed-circuit CCTV server.
+
+
+
