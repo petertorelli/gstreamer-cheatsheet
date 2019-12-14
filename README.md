@@ -135,4 +135,6 @@ I use a separate router for a subnet so I'm not trashing my work network perform
 Now I can use NVIDIA inference gstreamer plugins on the Xavier as a smart closed-circuit CCTV server.
 
 
+## Thoughts
 
+Do you ever get the feeling that no one really understands GStreamer and we're just throwing around a bunch of ! videoconvert ! and ! video/x-raw ! elements until stuff works? Just me? Ok then...
