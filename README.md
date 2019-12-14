@@ -100,7 +100,7 @@ The client took a while to figure out since a lot of the caps are not automatica
 
 # NVIDIA Jetpack Headless RTSP to macOS XQuartz
 
-NVIDIA Xavier doesn't like running as an Xhost. I tried VNC and xhosting to my mac, and I constantly run into:
+NVIDIA Xavier doesn't like running with a remote X host. I tried VNC and xhosting to my mac, and I constantly run into:
 
 ~~~
 nvbuf_utils: Could not get EGL display connection
@@ -108,7 +108,15 @@ nvbuf_utils: Could not get EGL display connection
 
 To which there is no solution on internet (just lots people arguing about what to set DISPLAY to .. sigh). Meanwhile, everything runs fine when I connect a display to the Xavier. My X-debug-fu is pretty rusty ... I haven't programmed in X since 1993.
 
-My hacky workaround is to set up the CCTV cameras and the Xavier on their own subnet, and then process the RTSP streams on the Xavier and dump them to a UDP port. This can be enabled or disabled by a cloud connection to the Xavier for the cloud video server. But here is the pipieline for future self-reference:
+For now I'm logging in with an X tunnel via ssh, `ssh -X`, after adding this to `/etc/ssh/ssh_config`:
+
+~~~
+    XAuthLocation /usr/X11/bin/xauth
+    ServerAliveInterval 60
+    ForwardX11Timeout 596h
+~~~
+
+My GStreamer hacky workaround is to set up the CCTV cameras and the Xavier on their own subnet, and then process the RTSP streams on the Xavier and dump them to a UDP port. This can be enabled or disabled by a cloud connection to the Xavier for the cloud video server. But here is the pipieline for future self-reference:
 
 Source (standard RTSP port 554, UDP 5000)
 ~~~
