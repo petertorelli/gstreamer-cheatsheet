@@ -27,6 +27,8 @@ Attempt #2 : Compiling from the source repo's that use GNU Autotools. All of the
 
 Attempt #3 : Compile the Git gst-build meson/ninja release. Similar issues, except the error indicated that ximagesink was not compiled for this architecture.
 
+**NOTE** (2019-12-01) I rebuilt 1.17.0 of everything and it is now working fine on macOS. Just remember to NOT INSTALL ANYTHING!!! Build to a local `--prefix` and setup PATH and PKG_CONFIG_PATH becuase you'll probably find something else breaks and need to build again. Which means I am no longer using macports or brew, I'm using my own local version.
+
 Attempt #4 : MacPorts. This worked except it was missing the `applemedia` AVF video tools which are in gst-plugins-bad. `autovideo{src,sink}` are unreleable and yielded "error(4)".
 
 Attempt #5 : Brew. Brew provided the AVF bad plugins, but no X plugins (ximagesink). Fortunately it has `gtksink` which is much more stable than `glimagesink` although neither can be resized by caps.
