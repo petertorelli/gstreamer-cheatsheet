@@ -100,6 +100,27 @@ The client took a while to figure out since a lot of the caps are not automatica
     gtksink
 ~~~
 
+If teeing to a file, don't forget `async=false`:
+
+~~~
+gst-launch-1.0 -v -e \
+  v4l2src ! \
+  videoconvert ! \
+  videoscale ! \
+  video/x-raw,width=640,height=480,framerate=20/1 ! \
+  tee name=t ! \
+    queue ! \
+    avenc_mpeg4 ! \
+    rtpmp4vpay ! \
+    udpsink host=127.0.0.1 port=5000 \
+  t. ! \
+    queue ! \
+    x264enc ! \
+    mp4mux ! \
+    filesink location=video.mp4 async=false
+~~
+
+
 # NVIDIA Jetpack Headless RTSP to macOS XQuartz
 
 NVIDIA Xavier doesn't like running with a remote X host. I tried VNC and xhosting to my mac, and I constantly run into:
