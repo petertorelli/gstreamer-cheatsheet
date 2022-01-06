@@ -118,7 +118,7 @@ gst-launch-1.0 -v -e \
     x264enc ! \
     mp4mux ! \
     filesink location=video.mp4 async=false
-~~
+~~~
 
 ## RTSP to File for CCTV Pro cameras
 
