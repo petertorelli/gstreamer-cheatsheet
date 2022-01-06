@@ -120,6 +120,18 @@ gst-launch-1.0 -v -e \
     filesink location=video.mp4 async=false
 ~~
 
+## RTSP to File for CCTV Pro cameras
+
+`h265parse` is required so that `mp4mux` knows video format.
+
+~~~
+gst-launch-1.0 -e -v \
+    rtspsrc location="rtsp://USER:PASSWORD@HOST:PORT/cam/realmonitor?channel=1&subtype=0" ! \
+    rtph265depay ! \
+    h265parse ! \
+    mp4mux ! \
+    filesink location=~/video.mp4
+~~~
 
 # NVIDIA Jetpack Headless RTSP to macOS XQuartz
 
